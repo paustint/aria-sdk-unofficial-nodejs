@@ -1,0 +1,15 @@
+{
+  "name": "aria-sdk-unofficial",
+  "version": "1.0.0",
+  "description": "Aria Systems nodejs SDK.  This is delivered with no warranty and in no way represents AriaSystems\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D Systems",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aria",
+    "sdk"
+  ],
+  "author": "Austin Turner",
+  "license": "ISC"
+}
