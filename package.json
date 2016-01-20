@@ -1,7 +1,7 @@
 {
   "name": "aria-sdk-unofficial",
-  "version": "1.0.0",
-  "description": "Aria Systems nodejs SDK.  This is delivered with no warranty and in no way represents AriaSystems\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D Systems",
+  "version": "1.0.2",
+  "description": "Aria Systems nodejs SDK. This is delivered with no warranty and in no way represents Aria Systems",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +11,9 @@
     "sdk"
   ],
   "author": "Austin Turner",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/paustint/aria-sdk-unofficial-nodejs"
+  }
 }

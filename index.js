@@ -1,5 +1,5 @@
 (function(){
     'use strict';
-    var Aria = require('aria-connector');
+    var Aria = require('./aria/aria-connector');
     module.exports = Aria;
 })();
