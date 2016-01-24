@@ -29,9 +29,9 @@ Creating a new Aria object takes in the following parameters:
 
 1. tenant (object)
 
-  a. client_n
+  a. clientNo
   
-  b. auth_key
+  b. authKey
   
   c. env (valid values are "SF" (default), "SC", "PROD", "SF_CPH", "PROD_CPH")
 
@@ -50,9 +50,11 @@ passing in `var aria = new Aria(tenant);` is the same as passing in `var aria = 
 ### Executing API
 
 Executing the API is done by calling the `call` function on the aria object.  The call function takes 4 parameters:
+
 1. Api Type (string)
 
-    a. 'core' (default), 'object', 'admintools'
+a. 'core' (default), 'object', 'admintools'
+
 2. Api name (string)
 3. parameters (hash containing required input parameters)
 4. callback (err, response)
