@@ -18,9 +18,9 @@ aria.call('core', 'authenticate_caller', null, function(err, data) {
     if (err) console.log(err);
     console.log(data);
 });
-```javascript
-### Output:
 ```
+### Output:
+```javascript
 { error_code: 0, error_msg: "ok" }
 ```
 
