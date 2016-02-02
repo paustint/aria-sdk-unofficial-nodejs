@@ -3,6 +3,55 @@ This SDK allows calling Aria Systems API using NodeJS.
 
 ## Usage
 
+### Promise based
+Based on (https://github.com/kriskowal/q)[https://github.com/kriskowal/q]
+```javascript
+var Aria = require('aria-sdk-unofficial');
+
+var tenant = {
+    env: 'SF',
+    clientNo: 123345,
+    authKey: 'auth-key-goes-here',
+}
+
+var aria = new Aria(tenant);
+
+aria.call('core', 'authenticate_caller')
+    .then(function(data) {
+        console.log(data);
+    })
+    .catch(function(err) {
+        console.log(err);
+    }
+});
+```
+
+```javascript
+aria.call('core', 'get_acct_details_all', {acct_no: 123456})
+    .then(function(data) {
+        console.log(data);
+    })
+    .catch(function(err) {
+        console.log(err);
+    }
+});
+```
+
+```javascript
+var promise = aria.call('core', 'get_acct_details_all', {acct_no: 123456});
+
+promise.then(function(data) {
+    console.log(data);
+})
+
+promise.catch(function(err) {
+    console.log(err);
+}
+
+});
+```
+
+### Callback based *(may be deprecated in future versions)*  Note that a promise is still returned even with callback.
 ```javascript
 var Aria = require('aria-sdk-unofficial');
 
@@ -57,7 +106,7 @@ a. 'core' (default), 'object', 'admintools'
 
 2. Api name (string)
 3. parameters (hash containing required input parameters)
-4. callback (err, response)
+4. callback (err, response) *Note: may be deprecated in future releases! reccommended to use promise*
 
 ### Response
 The response will provide an error in the first parameter if exists.  

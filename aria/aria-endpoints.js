@@ -83,7 +83,6 @@
     }
     
     EndPoints.prototype.getEndpoint = function(type) {
-        console.log(this.endpoints[type.toLowerCase()] || this.endpoints.core)
         return this.endpoints[type.toLowerCase()] || this.endpoints.core;
     }
     

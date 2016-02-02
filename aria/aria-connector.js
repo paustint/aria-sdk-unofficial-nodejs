@@ -2,6 +2,7 @@
     'use strict';
     
     var https = require('https');
+    var Q = require('q');
     var EndPoints = require('./aria-endpoints');
     // TODO add in other environments
 
@@ -29,11 +30,12 @@
      * @param type: 'core' (default), 'object', 'admintools'. If no match or null, defaults to core
      * @param restCall: Aria api call name
      * @param params: Aria parameters object. If none, can be {} or null
-     * @param onResult: Callback function (err, responseObject, statusCode (if not 200))
-     * @param debug (optional): turns on debug logging, defaults to false
+     * @param onResult - optional callback instead of parameters.  It is recommended to use promises instead of callback.
+     * Returns promise
      */
     Aria.prototype.call = function(type, restCall, params, onResult)
     {
+        var deferred = Q.defer();
         var clientNo = this.clientNo;
         var authKey = this.authKey;
         var debug = this.debug;
@@ -56,11 +58,7 @@
         
         // make request
         var req = https.request(options, function(res) {
-            if (debug) 
-            {
-                console.log('status: ' + res.statusCode);
-                console.log('headers: ' + JSON.stringify(res.headers));
-            }
+            
             res.setEncoding('utf8');
             
             var output = '';
@@ -76,30 +74,29 @@
                 };
                 try {
                     var data = JSON.parse(output);
-                    if (res.statusCode === 200) {
-                        onResult(null, data);
-                    } else {
-                        console.log('status code not 200. actual: ' + res.statusCode);
-                        onResult(null, data, res.statusCode);
-                    }
+                        deferred.resolve(data);
+                        if (onResult) onResult(null, data);
                     
                 } catch (e) {
                     console.log('problem with request: ' + e.message);
-                    onResult(e);
+                    deferred.reject(new Error(e));
+                    if (onResult) onResult(e);
                 }
-                
             });
         });
         
         req.on('error', function(e) {
             console.log('problem with request: ' + e.message);
-            onResult(e);
+            deferred.reject(new Error(e));
+            if (onResult) onResult(e);
         });
         // Trigger request
-        if (debug) { console.log('starting request... time: ' + new Date()) };
+        if (debug) { console.log('starting request: ' + new Date()) };
         req.write(postData);
         // Close object
         req.end();
+        // Return promise
+        return deferred.promise;
     }
     
     module.exports = Aria;

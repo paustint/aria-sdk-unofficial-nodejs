@@ -1,6 +1,6 @@
 {
   "name": "aria-sdk-unofficial",
-  "version": "1.0.2",
+  "version": "1.2.1",
   "description": "Aria Systems nodejs SDK. This is delivered with no warranty and in no way represents Aria Systems",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,10 @@
   "author": "Austin Turner",
   "license": "ISC",
   "repository": {
-      "type": "git",
-      "url": "https://github.com/paustint/aria-sdk-unofficial-nodejs"
+    "type": "git",
+    "url": "https://github.com/paustint/aria-sdk-unofficial-nodejs"
+  },
+  "dependencies": {
+    "q": "^1.4.1"
   }
 }
