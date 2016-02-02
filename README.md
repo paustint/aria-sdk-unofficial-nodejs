@@ -4,7 +4,7 @@ This SDK allows calling Aria Systems API using NodeJS.
 ## Usage
 
 ### Promise based
-Based on (https://github.com/kriskowal/q)[https://github.com/kriskowal/q]
+Based on https://github.com/kriskowal/q
 ```javascript
 var Aria = require('aria-sdk-unofficial');
 
