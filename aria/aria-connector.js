@@ -36,6 +36,7 @@
     Aria.prototype.call = function(type, restCall, params, onResult)
     {
         var deferred = Q.defer();
+        params = params || {};
         var clientNo = this.clientNo;
         var authKey = this.authKey;
         var debug = this.debug;
