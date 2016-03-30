@@ -32,8 +32,7 @@ aria.call('core', 'get_acct_details_all', {acct_no: 123456})
     })
     .catch(function(err) {
         console.log(err);
-    }
-});
+    });
 ```
 
 ```javascript
@@ -41,12 +40,10 @@ var promise = aria.call('core', 'get_acct_details_all', {acct_no: 123456});
 
 promise.then(function(data) {
     console.log(data);
-})
+});
 
 promise.catch(function(err) {
     console.log(err);
-}
-
 });
 ```
 
