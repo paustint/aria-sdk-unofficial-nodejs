@@ -22,8 +22,7 @@ aria.call('core', 'authenticate_caller')
     })
     .catch(function(err) {
         console.log(err);
-    }
-});
+    });
 ```
 
 ```javascript
