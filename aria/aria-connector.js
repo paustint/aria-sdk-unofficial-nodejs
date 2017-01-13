@@ -2,102 +2,102 @@
     'use strict';
     
     var https = require('https');
-    var Q = require('q');
     var EndPoints = require('./aria-endpoints');
     // TODO add in other environments
 
     /**
      * Tenant should be an object with the following:
-     * @param tenant = {}
+     * @param {tenant} Object = {}
      * env: SF, SC, PROD, SF_CPH, PROD_CPH *Note: this can be omitted if override.host is provided
      * clientNo: 123435 (client number integer)
      * authKey: 'gfdgfdsfdsfds' (authorization key for API calls String)
      * 
      * optional override can include the following:
-     * @override = {}
+     * @param {override} Object = {}
      * host: urls for the core, object, admintools api (all must be provided)
      * outputFormat: String value of output type.  xml, json (default), or html
+     * @param {debug} Boolean prints to the console if provided, defaults to false
+     * @param {timeout} Number sets timeout in millisecond, defaults to 120000
      */
-    function Aria(tenant, override, debug) {
+    function Aria(tenant, override, debug, timeout) {
         this.ariaEndpoints = new EndPoints(tenant.env, override);
         this.clientNo = tenant.clientNo;
         this.authKey = tenant.authKey;
         this.debug = debug || false;
+        this.timeout = timeout || 120000
     }
 
     /**
      * Call Aria API
      * @param type: 'core' (default), 'object', 'admintools'. If no match or null, defaults to core
      * @param restCall: Aria api call name
-     * @param params: Aria parameters object. If none, can be {} or null
-     * @param onResult - optional callback instead of parameters.  It is recommended to use promises instead of callback.
+     * @param payload: Aria request payload object. Defaults to null
+     * @param callback - optional callback instead of promise.  It is recommended to use promises instead of callback.
      * Returns promise
      */
-    Aria.prototype.call = function(type, restCall, params, onResult)
-    {
-        var deferred = Q.defer();
-        params = params || {};
-        var clientNo = this.clientNo;
-        var authKey = this.authKey;
-        var debug = this.debug;
-        
-        if ( debug !== true) debug = false;
-        // Setup parameters
-        if (params === null) params = {};
-        params.client_no = clientNo;
-        params.auth_key = authKey;
-        params.rest_call = restCall;
-        params.output_format = this.ariaEndpoints.outputFormat;
-        var postData = JSON.stringify(params);
-        if (debug) { console.log('Parameters: ' + postData); };
-        
-        // get http options
-        var options = this.ariaEndpoints.getEndpoint(type);
-        
-        options.headers = this.ariaEndpoints.getHeader(postData);
-        if (debug) { console.log('Endpoint details: ' + JSON.stringify(options)); };
-        
-        // make request
-        var req = https.request(options, function(res) {
-            
-            res.setEncoding('utf8');
-            
-            var output = '';
-            // Add chunk of data to output
-            res.on('data', function (chunk) {
-                output += chunk;
-            });	
-            // Done getting objects, call callback
-            res.on('end', function() {
-                if (debug) { 
-                    console.log('request finished: ' + new Date());
-                    console.log('response: ' + output);
-                };
-                try {
-                    var data = JSON.parse(output);
-                        deferred.resolve(data);
-                        if (onResult) onResult(null, data);
-                    
-                } catch (e) {
-                    console.log('problem with request: ' + e.message);
-                    deferred.reject(new Error(e));
-                    if (onResult) onResult(e);
-                }
+    Aria.prototype.call = function(type, restCall, payload, callback) {
+        return new Promise((resolve, reject) => {
+            payload = payload || {};
+            const clientNo = this.clientNo;
+            const authKey = this.authKey;
+            const debug = this.debug;
+
+            if ( debug !== true) debug = false;
+            // Setup parameters
+            if (payload === null) payload = {};
+            payload.client_no = clientNo;
+            payload.auth_key = authKey;
+            payload.rest_call = restCall;
+            payload.output_format = this.ariaEndpoints.outputFormat;
+            const postData = JSON.stringify(payload);
+            if (debug) { console.log('Parameters: ' + postData); };
+
+            // get http options
+            const options = this.ariaEndpoints.getEndpoint(type);
+            options.headers = this.ariaEndpoints.getHeader(postData);
+            options.timeout = this.timeout;
+            if (debug) { console.log('Endpoint details: ' + JSON.stringify(options)); };
+
+            // make request
+            const req = https.request(options, function(res) {
+                res.setEncoding('utf8');
+                let output = '';
+                // Add chunk of data to output
+                res.on('data', function (chunk) {
+                    output += chunk;
+                });	
+                // Done getting objects, call callback
+                res.on('end', function() {
+                    if (debug) { 
+                        console.log('request finished: ' + new Date());
+                        console.log('response: ' + output);
+                    };
+                    try {
+                        var data = JSON.parse(output);
+                            resolve(data);
+                            if (callback) callback(null, data);
+                        
+                    } catch (e) {
+                        console.log('problem with request: ' + e.message);
+                        reject(new Error(e));
+                        if (callback) callback(e);
+                    }
+                });
             });
+
+            req.on('error', function(e) {
+                if(e.message.code)
+                console.log('problem with request: ' + e.message);
+                reject(new Error(e));
+                if (callback) callback(e);
+            });
+            // Trigger request
+            if (debug) { console.log('starting request: ' + new Date()) };
+            req.write(postData);
+            // Close object
+            req.end();
         });
-        
-        req.on('error', function(e) {
-            console.log('problem with request: ' + e.message);
-            deferred.reject(new Error(e));
-            if (onResult) onResult(e);
-        });
-        // Trigger request
-        if (debug) { console.log('starting request: ' + new Date()) };
-        req.write(postData);
-        // Close object
-        req.end();
-        // Return promise
-        return deferred.promise;
+      
     }
     
     module.exports = Aria;
