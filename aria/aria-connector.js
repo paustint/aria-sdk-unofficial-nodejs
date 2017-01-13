@@ -1,8 +1,8 @@
 (function(){
     'use strict';
     
-    var https = require('https');
-    var EndPoints = require('./aria-endpoints');
+    let https = require('https');
+    let EndPoints = require('./aria-endpoints');
     // TODO add in other environments
 
     /**
@@ -66,30 +66,31 @@
                 res.on('data', function (chunk) {
                     output += chunk;
                 });	
-                // Done getting objects, call callback
+                // Done receiving response, resolve promse and call callback, if necessary
                 res.on('end', function() {
-                    if (debug) { 
+                    if (debug) {
                         console.log('request finished: ' + new Date());
                         console.log('response: ' + output);
                     };
+                    /**
+                     * Attempt to deserialize and respond to the request
+                     */
                     try {
-                        var data = JSON.parse(output);
-                            resolve(data);
-                            if (callback) callback(null, data);
-                        
-                    } catch (e) {
-                        console.log('problem with request: ' + e.message);
-                        reject(new Error(e));
-                        if (callback) callback(e);
+                        const data = JSON.parse(output);
+                        resolve(data);
+                        if (callback) callback(null, data);
+                    } catch (err) {
+                        console.log('problem with request: ' + err.message);
+                        reject(new Error(err));
+                        if (callback) { callback(err); }
                     }
                 });
             });
 
-            req.on('error', function(e) {
-                if(e.message.code)
-                console.log('problem with request: ' + e.message);
-                reject(new Error(e));
-                if (callback) callback(e);
+            req.on('error', function(err) {
+                console.log('problem with request: ' + err.message);
+                reject(new Error(err));
+                if (callback) { callback(err); }
             });
             // Trigger request
             if (debug) { console.log('starting request: ' + new Date()) };

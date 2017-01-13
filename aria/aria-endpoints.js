@@ -8,9 +8,9 @@
      * outputFormat: String value of output type.  xml, json (default), or html
      */
     function EndPoints(env, override) {
-        var json = 'json';
-        var xml = 'xml';
-        var html = 'html';
+        const json = 'json';
+        const xml = 'xml';
+        const html = 'html';
         
         override = override || {};
         this.outputFormat = override.outputFormat || json;

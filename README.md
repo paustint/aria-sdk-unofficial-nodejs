@@ -1,10 +1,11 @@
 ## NodeJS Aria Systems SDK
 This SDK allows calling Aria Systems API using NodeJS.
 
+This has been refactored to remove all 3rd party dependencies and now uses the native Promise object
+
 ## Usage
 
-### Promise based
-Based on https://github.com/kriskowal/q
+### Initializing
 ```javascript
 var Aria = require('aria-sdk-unofficial');
 
@@ -15,7 +16,32 @@ var tenant = {
 }
 
 var aria = new Aria(tenant);
+```
 
+### Additional Aria() options
+Method signature: `Aria(tenant, override, debug, timeout)`
+- tenant: Object with env, clientNo, authKey specified
+- override: object with the following parameters (none or all overrides can be specified)
+  - outputFormat: string = (defaults to JSON)
+  - host: object = core, object, admintools properties. 
+    - This override the 'env' property on the tenant parameter.
+    - If one is provided, all must be provided.
+    - These should be host of the Aria server. e.x.: core: 'secure.future.stage.ariasystems.net'
+- debug: boolean parameter specifying if debugging data, such as the payload, should be logged to the console
+- timeout: number = HTTP request timeout in milliseconds.  Defaults to 12000.
+
+## Making API request
+Use the call method on the Aria object.
+
+The call function has the following signature: `function(type: 'core' | 'object' | 'admintools', restCall: string, payload?: Object, callback?: Function)`
+- type: string = Aria API type. Either core, object, or admintools
+- restCall: string = Api call name of the Aria api call
+- payload: Object = Optional data to send with request, defaults to {}
+- callback: Function = Optional callback if not using promises
+
+
+## Making call with no payload
+```javascript
 aria.call('core', 'authenticate_caller')
     .then(function(data) {
         console.log(data);
@@ -25,6 +51,7 @@ aria.call('core', 'authenticate_caller')
     });
 ```
 
+## Making call with payload
 ```javascript
 aria.call('core', 'get_acct_details_all', {acct_no: 123456})
     .then(function(data) {
@@ -35,76 +62,16 @@ aria.call('core', 'get_acct_details_all', {acct_no: 123456})
     });
 ```
 
+### Callback based *(may be deprecated in future versions)*
 ```javascript
-var promise = aria.call('core', 'get_acct_details_all', {acct_no: 123456});
-
-promise.then(function(data) {
-    console.log(data);
-});
-
-promise.catch(function(err) {
-    console.log(err);
-});
-```
-
-### Callback based *(may be deprecated in future versions)*  Note that a promise is still returned even with callback.
-```javascript
-var Aria = require('aria-sdk-unofficial');
-
-var tenant = {
-    env: 'SF',
-    clientNo: 123345,
-    authKey: 'auth-key-goes-here',
-}
-
-var aria = new Aria(tenant);
-
 aria.call('core', 'authenticate_caller', null, function(err, data) {
     if (err) console.log(err);
     console.log(data);
 });
 ```
-### Output:
+
+
+## Sample Output
 ```javascript
 { error_code: 0, error_msg: "ok" }
 ```
-
-Creating a new Aria object takes in the following parameters:
-(tenant, override, debug)
-
-1. tenant (object)
-
-  a. clientNo
-  
-  b. authKey
-  
-  c. env (valid values are "SF" (default), "SC", "PROD", "SF_CPH", "PROD_CPH")
-
-2. Override options (object)
-
-  a. host {core: 'url', object: 'url', admintools: 'url'} (object including must include properties for core, object, admintools -> urls for overriding built in URLs.) 
-
-  b. outputFormat 'xml', 'json' (default), 'html' (String determining output format)
-
-3. debug (boolean)
-
-  a. true / false (default) to show detailed debug information
-
-passing in `var aria = new Aria(tenant);` is the same as passing in `var aria = new Aria(tenant, null, false);`  
-
-### Executing API
-
-Executing the API is done by calling the `call` function on the aria object.  The call function takes 4 parameters:
-
-1. Api Type (string)
-
-a. 'core' (default), 'object', 'admintools'
-
-2. Api name (string)
-3. parameters (hash containing required input parameters)
-4. callback (err, response) *Note: may be deprecated in future releases! reccommended to use promise*
-
-### Response
-The response will provide an error in the first parameter if exists.  
-The second return parameter is the API call results.  
-The third parameter is only returned if the status code is something other than 200 and the results are still returned in this case.
