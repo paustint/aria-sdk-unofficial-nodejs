@@ -1,6 +1,6 @@
 {
   "name": "aria-sdk-unofficial",
-  "version": "1.4.0",
+  "version": "1.3.1",
   "description": "Aria Systems nodejs SDK. This is delivered with no warranty and in no way represents Aria Systems",
   "main": "index.js",
   "scripts": {
