@@ -4,7 +4,7 @@
   "description": "Aria Systems nodejs SDK. This is delivered with no warranty and in no way represents Aria Systems",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "keywords": [
     "aria",
@@ -12,12 +12,16 @@
     "sdk"
   ],
   "author": "Austin Turner",
-
   "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/paustint/aria-sdk-unofficial-nodejs"
   },
-  "dependencies": {
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^3.2.0"
   }
 }
